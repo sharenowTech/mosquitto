@@ -255,12 +255,28 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 	mosq->reconnects = 0;
 
 	while(run){
+        bool want_end_loop = false;
 		do{
 #ifdef HAVE_PTHREAD_CANCEL
 			pthread_testcancel();
 #endif
 			rc = mosquitto_loop(mosq, timeout, max_packets);
-		}while(run && rc == MOSQ_ERR_SUCCESS);
+#ifdef WITH_THREADING
+            pthread_mutex_lock(&mosq->state_mutex);
+            want_end_loop = mosq->want_end_loop;
+            pthread_mutex_unlock(&mosq->state_mutex);
+#endif
+		}while(run && rc == MOSQ_ERR_SUCCESS && want_end_loop == false);
+        
+#ifdef WITH_THREADING
+        pthread_mutex_lock(&mosq->state_mutex);
+        want_end_loop = mosq->want_end_loop;
+        pthread_mutex_unlock(&mosq->state_mutex);
+        if (want_end_loop == true) {
+            return rc;
+        }
+#endif
+        
 		/* Quit after fatal errors. */
 		switch(rc){
 			case MOSQ_ERR_NOMEM:

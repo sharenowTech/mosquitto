@@ -74,6 +74,15 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 		mosq->bind_address = mosquitto__strdup(bind_address);
 		if(!mosq->bind_address) return MOSQ_ERR_NOMEM;
 	}
+    
+    if(mosq->sockpairR != INVALID_SOCKET){
+        COMPAT_CLOSE(mosq->sockpairR);
+        mosq->sockpairR = INVALID_SOCKET;
+    }
+    if(mosq->sockpairW != INVALID_SOCKET){
+        COMPAT_CLOSE(mosq->sockpairW);
+        mosq->sockpairW = INVALID_SOCKET;
+    }
 
 	mosq->keepalive = keepalive;
 	mosq->msgs_in.inflight_quota = mosq->msgs_in.inflight_maximum;

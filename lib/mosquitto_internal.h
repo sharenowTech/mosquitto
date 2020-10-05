@@ -265,6 +265,7 @@ struct mosquitto {
 	pthread_mutex_t state_mutex;
 	pthread_mutex_t mid_mutex;
 	pthread_t thread_id;
+    bool want_end_loop;
 #endif
 	bool clean_start;
 	uint32_t session_expiry_interval;

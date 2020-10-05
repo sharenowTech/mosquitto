@@ -80,6 +80,9 @@ int mosquitto_loop_stop(struct mosquitto *mosq, bool force)
 	
 #ifdef HAVE_PTHREAD_CANCEL
 	if(force){
+        pthread_mutex_lock(&mosq->state_mutex);
+        mosq->want_end_loop = true;
+        pthread_mutex_unlock(&mosq->state_mutex);
 		pthread_cancel(mosq->thread_id);
 	}
 #endif

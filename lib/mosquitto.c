@@ -117,6 +117,7 @@ struct mosquitto *mosquitto_new(const char *id, bool clean_start, void *userdata
 		}
 #ifdef WITH_THREADING
 		mosq->thread_id = pthread_self();
+        mosq->want_end_loop = false;
 #endif
 		rc = mosquitto_reinitialise(mosq, id, clean_start, userdata);
 		if(rc){
