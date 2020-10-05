@@ -22,6 +22,7 @@ Contributors:
 #ifndef WIN32
 #include <sys/time.h>
 #include <strings.h>
+#include <mach/mach_time.h>
 #endif
 
 #include "logging_mosq.h"
